@@ -45,8 +45,8 @@ class ConnectStatus: Reactor.Component {
         } else if (connect_status == 0) {
             return translate('connecting_status');
         }
-        if (!handler.using_public_server()) return translate('Ready');
-        return <span>{translate("Ready")}, <span .link #setup-server>{translate("setup_server_tip")}</span></span>;
+        if (!handler.using_public_server()) return <span>{translate("Ready")}, <span>TUHH-RustDesk-Server</span></span>;
+        return <span>{translate("Ready")}, <span>TUHH-RustDesk-Server</span></span>;
     }
 
     event click $(#start-service) () {

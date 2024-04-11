@@ -39,7 +39,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
   double? get height => bind.isIncomingOnly() ? null : em * 3;
 
   void onUsePublicServerGuide() {
-    const url = "https://rustdesk.com/pricing.html";
+    const url = "https://www.tuhh.de/rzt/services/institute";
     canLaunchUrlString(url).then((can) {
       if (can) {
         launchUrlString(url);
@@ -92,7 +92,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
                       children: [
                         Flexible(
                           child: Text(
-                            translate('setup_server_tip'),
+                            "TUHH-RustDesk-Server",
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
                                 fontSize: em),

@@ -92,7 +92,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
                       children: [
                         Flexible(
                           child: Text(
-                            "TUHH-RustDesk-Server",
+                            "connected",
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
                                 fontSize: em),

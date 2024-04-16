@@ -92,7 +92,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
                       children: [
                         Flexible(
                           child: Text(
-                            "connected",
+                            "ready",
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
                                 fontSize: em),

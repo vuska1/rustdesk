@@ -104,9 +104,7 @@ const CHARS: &[char] = &[
 pub const RENDEZVOUS_SERVERS: &[&str] = &["prod-rdp-rust01.rz.tuhh.de"];
 pub const PUBLIC_RS_PUB_KEY: &str = "hDmseojk0RuGyaAeubeAmCdvnXVPoC9n0HQHkeqPAWc=";
 
-pub const RS_PUB_KEY: &str = match option_env!("RS_PUB_KEY") {
-    Some(key) if !key.is_empty() => key,
-    _ => PUBLIC_RS_PUB_KEY,
+pub const RS_PUB_KEY: &str = PUBLIC_RS_PUB_KEY,
 };
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
@@ -690,6 +688,8 @@ impl Config {
     }
 
     pub fn get_rendezvous_server() -> String {
+        return format!("prod-rdp-rust01.rz.tuhh.de:{RENDEZVOUS_PORT}");
+        /*
         let mut rendezvous_server = EXE_RENDEZVOUS_SERVER.read().unwrap().clone();
         if rendezvous_server.is_empty() {
             rendezvous_server = Self::get_option("custom-rendezvous-server");
@@ -710,6 +710,7 @@ impl Config {
             rendezvous_server = format!("{rendezvous_server}:{RENDEZVOUS_PORT}");
         }
         rendezvous_server
+        */
     }
 
     pub fn get_rendezvous_servers() -> Vec<String> {

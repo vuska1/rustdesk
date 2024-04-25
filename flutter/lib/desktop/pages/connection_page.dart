@@ -332,7 +332,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                     child: Row(
                   children: [
                     AutoSizeText(
-                      translate('Control Remote Desktop'),
+                      'TUHH Remote Desktop',
                       maxLines: 1,
                       style: Theme.of(context)
                           .textTheme

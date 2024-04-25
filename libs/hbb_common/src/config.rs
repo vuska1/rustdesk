@@ -104,8 +104,7 @@ const CHARS: &[char] = &[
 pub const RENDEZVOUS_SERVERS: &[&str] = &["prod-rdp-rust01.rz.tuhh.de"];
 pub const PUBLIC_RS_PUB_KEY: &str = "hDmseojk0RuGyaAeubeAmCdvnXVPoC9n0HQHkeqPAWc=";
 
-pub const RS_PUB_KEY: &str = PUBLIC_RS_PUB_KEY,
-};
+pub const RS_PUB_KEY: &str = PUBLIC_RS_PUB_KEY;
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;

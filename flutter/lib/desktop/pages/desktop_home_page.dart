@@ -456,6 +456,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   }
 
   Future<Widget> buildHelpCards() async {
+    /*
     if (!bind.isCustomClient() &&
         updateUrl.isNotEmpty &&
         !isCardClosed &&
@@ -468,11 +469,13 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         await launchUrl(url);
       }, closeButton: true);
     }
+    */
     if (systemError.isNotEmpty) {
       return buildInstallCard("", systemError, "", () {});
     }
 
     if (isWindows && !bind.isDisableInstallation()) {
+      /*
       if (!bind.mainIsInstalled()) {
         return buildInstallCard(
             "", bind.isOutgoingOnly() ? "" : "install_tip", "Install",
@@ -488,6 +491,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           bind.mainUpdateMe();
         });
       }
+      */
     } else if (isMacOS) {
       if (!(bind.isOutgoingOnly() ||
           bind.mainIsCanScreenRecording(prompt: false))) {

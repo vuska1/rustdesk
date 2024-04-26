@@ -1436,7 +1436,7 @@ class RustdeskImpl {
   }
 
   bool isCustomClient({dynamic hint}) {
-    return false;
+    return true;
   }
 
   bool isDisableSettings({dynamic hint}) {

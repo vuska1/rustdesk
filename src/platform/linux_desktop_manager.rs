@@ -44,8 +44,8 @@ fn check_desktop_manager() {
     }
 }
 
-// --server process
 pub fn start_xdesktop() {
+    debug_assert!(crate::is_server());
     std::thread::spawn(|| {
         *DESKTOP_MANAGER.lock().unwrap() = Some(DesktopManager::new());
 
@@ -91,6 +91,7 @@ fn detect_headless() -> Option<&'static str> {
 }
 
 pub fn try_start_desktop(_username: &str, _passsword: &str) -> String {
+    debug_assert!(crate::is_server());
     if _username.is_empty() {
         let username = get_username();
         if username.is_empty() {
@@ -277,7 +278,7 @@ impl DesktopManager {
         }
     }
 
-    // The logic mainly fron https://github.com/neutrinolabs/xrdp/blob/34fe9b60ebaea59e8814bbc3ca5383cabaa1b869/sesman/session.c#L334.
+    // The logic mainly from https://github.com/neutrinolabs/xrdp/blob/34fe9b60ebaea59e8814bbc3ca5383cabaa1b869/sesman/session.c#L334.
     fn get_avail_display() -> ResultType<u32> {
         let display_range = 0..51;
         for i in display_range.clone() {

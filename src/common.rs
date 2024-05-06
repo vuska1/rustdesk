@@ -5,6 +5,8 @@ use std::{
     task::Poll,
 };
 
+use serde_json::Value;
+
 #[derive(Debug, Eq, PartialEq)]
 pub enum GrabState {
     Ready,
@@ -123,7 +125,7 @@ use hbb_common::compress::decompress;
 use hbb_common::{
     allow_err,
     anyhow::{anyhow, Context},
-    bail,
+    bail, base64,
     bytes::Bytes,
     compress::compress as compress_func,
     config::{self, Config, CONNECT_TIMEOUT, READ_TIMEOUT},
@@ -145,7 +147,10 @@ use hbb_common::{
 // #[cfg(any(target_os = "android", target_os = "ios", feature = "cli"))]
 use hbb_common::{config::RENDEZVOUS_PORT, futures::future::join_all};
 
-use crate::ui_interface::{get_option, set_option};
+use crate::{
+    hbbs_http::create_http_client_async,
+    ui_interface::{get_option, set_option},
+};
 
 pub type NotifyMessageBox = fn(String, String, String, String) -> dyn Future<Output = ()>;
 
@@ -839,18 +844,16 @@ pub fn refresh_rendezvous_server() {
 }
 
 pub fn run_me<T: AsRef<std::ffi::OsStr>>(args: Vec<T>) -> std::io::Result<std::process::Child> {
-    #[cfg(not(feature = "appimage"))]
-    {
-        let cmd = std::env::current_exe()?;
-        return std::process::Command::new(cmd).args(&args).spawn();
-    }
-    #[cfg(feature = "appimage")]
-    {
-        let appdir = std::env::var("APPDIR").map_err(|_| std::io::ErrorKind::Other)?;
+    #[cfg(target_os = "linux")]
+    if let Ok(appdir) = std::env::var("APPDIR") {
         let appimage_cmd = std::path::Path::new(&appdir).join("AppRun");
-        log::info!("path: {:?}", appimage_cmd);
-        return std::process::Command::new(appimage_cmd).args(&args).spawn();
+        if appimage_cmd.exists() {
+            log::info!("path: {:?}", appimage_cmd);
+            return std::process::Command::new(appimage_cmd).args(&args).spawn();
+        }
     }
+    let cmd = std::env::current_exe()?;
+    return std::process::Command::new(cmd).args(&args).spawn();
 }
 
 #[inline]
@@ -972,7 +975,7 @@ pub fn check_software_update() {
 #[tokio::main(flavor = "current_thread")]
 async fn check_software_update_() -> hbb_common::ResultType<()> {
     let url = "https://github.com/rustdesk/rustdesk/releases/latest";
-    let latest_release_response = reqwest::get(url).await?;
+    let latest_release_response = create_http_client_async().get(url).send().await?;
     let latest_release_version = latest_release_response
         .url()
         .path()
@@ -1067,7 +1070,7 @@ pub fn get_audit_server(api: String, custom: String, typ: String) -> String {
 }
 
 pub async fn post_request(url: String, body: String, header: &str) -> ResultType<String> {
-    let mut req = reqwest::Client::new().post(url);
+    let mut req = create_http_client_async().post(url);
     if !header.is_empty() {
         let tmp: Vec<&str> = header.split(": ").collect();
         if tmp.len() == 2 {
@@ -1082,6 +1085,65 @@ pub async fn post_request(url: String, body: String, header: &str) -> ResultType
 #[tokio::main(flavor = "current_thread")]
 pub async fn post_request_sync(url: String, body: String, header: &str) -> ResultType<String> {
     post_request(url, body, header).await
+}
+
+#[tokio::main(flavor = "current_thread")]
+pub async fn http_request_sync(
+    url: String,
+    method: String,
+    body: Option<String>,
+    header: String,
+) -> ResultType<String> {
+    let http_client = create_http_client_async();
+    let mut http_client = match method.as_str() {
+        "get" => http_client.get(url),
+        "post" => http_client.post(url),
+        "put" => http_client.put(url),
+        "delete" => http_client.delete(url),
+        _ => return Err(anyhow!("The HTTP request method is not supported!")),
+    };
+    let v = serde_json::from_str(header.as_str())?;
+
+    if let Value::Object(obj) = v {
+        for (key, value) in obj.iter() {
+            http_client = http_client.header(key, value.as_str().unwrap_or_default());
+        }
+    } else {
+        return Err(anyhow!("HTTP header information parsing failed!"));
+    }
+
+    if let Some(b) = body {
+        http_client = http_client.body(b);
+    }
+
+    let response = http_client
+        .timeout(std::time::Duration::from_secs(12))
+        .send()
+        .await?;
+
+    // Serialize response headers
+    let mut response_headers = serde_json::map::Map::new();
+    for (key, value) in response.headers() {
+        response_headers.insert(
+            key.to_string(),
+            serde_json::json!(value.to_str().unwrap_or("")),
+        );
+    }
+
+    let status_code = response.status().as_u16();
+    let response_body = response.text().await?;
+
+    // Construct the JSON object
+    let mut result = serde_json::map::Map::new();
+    result.insert("status_code".to_string(), serde_json::json!(status_code));
+    result.insert(
+        "headers".to_string(),
+        serde_json::Value::Object(response_headers),
+    );
+    result.insert("body".to_string(), serde_json::json!(response_body));
+
+    // Convert map to JSON string
+    serde_json::to_string(&result).map_err(|e| anyhow!("Failed to serialize response: {}", e))
 }
 
 #[inline]

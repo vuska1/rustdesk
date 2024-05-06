@@ -9,38 +9,32 @@
 		<SummaryInformation Keywords="Installer" Description="$(var.Description)" Codepage="!(loc.SummaryCodepage)" />
 
 		<!--<PropertyRef Id="UpgradesFile" />-->
-		
+
 		<PropertyRef Id="AddRemovePropertiesFile" />
 
 		<Media Id="1" Cabinet="cab1.cab" EmbedCab="yes" CompressionLevel="high" />
 		<Icon Id="AppIcon" SourceFile="Resources\icon.ico" />
 
 		<!-- User Interface -->
-		<WixVariable Id="WixUILicenseRtf" Value="RustDesk License.rtf" />
+		<WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
 
 		<ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 		<UIRef Id="WixUI_ErrorProgressText" />
 
 		<InstallUISequence>
-			<Show Dialog="AnotherAppDialog" Before="WelcomeDlg" Condition="Not installed AND RUSTDESK_WINDOWS_INSTALLER=&quot;#0&quot;"/>
+			<Show Dialog="AnotherAppDialog" Before="WelcomeDlg" Condition="Not installed AND APP_WINDOWS_INSTALLER=&quot;#0&quot;"/>
 		</InstallUISequence>
 
 		<InstallExecuteSequence>
-			<!-- Launch ClientLauncher if installing or already installed and not uninstalling -->
-			<Custom Action="LaunchApp" After="InstallFinalize" />
-			<Custom Action="LaunchAppTray" After="InstallFinalize" />
-
 			<InstallExecute After="RemoveExistingProducts" />
 
-			<Custom Action="TerminateProcesses" Before="RemoveFiles"/>
-			<Custom Action="TerminateProcesses.SetParam" Before="TerminateProcesses"/>
+			<!--Only do InstallValidate if is not Uninstall-->
+			<!--<InstallValidate Condition="NOT (Installed AND REMOVE AND NOT UPGRADINGPRODUCTCODE )" />-->
+			<!--Only do InstallValidate if is Install-->
+			<InstallValidate Condition="NOT Installed" />
 
 		</InstallExecuteSequence>
-		<CustomAction Id="LaunchApp" ExeCommand="" Return="asyncNoWait" FileRef="RustDesk.exe" />
-		<CustomAction Id="LaunchAppTray" ExeCommand=" --tray" Return="asyncNoWait" FileRef="RustDesk.exe" />
-		<Property Id="TerminateProcesses" Value="RustDeskTest.exe" />
-		<CustomAction Id="TerminateProcesses.SetParam" Return="check" Property="TerminateProcesses" Value="$(var.Product).exe" />
-		
+
 		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" Schedule="afterInstallInitialize" AllowSameVersionUpgrades="yes" />
 
 		<Feature Id="App" Level="1" AllowAdvertise="no" Display="expand" Title="!(loc.F_App)" Description="!(loc.F_App_Desc)" AllowAbsent="no">
@@ -51,7 +45,7 @@
 			<ComponentRef Id="Product.Registry.CommandPlay" />
 			<ComponentRef Id="Product.Registry.URLProtocol" />
 			<ComponentRef Id="Product.Registry.Command" />
-			<ComponentRef Id="Product.Registry.UninstallRustDesk" />
+			<ComponentRef Id="Product.Registry.UninstallApp" />
 			<ComponentRef Id="App.StartMenu" />
 			<ComponentRef Id="Product.Registry.PersistedShortcutProperties" />
 		</Feature>

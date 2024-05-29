@@ -101,8 +101,6 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["prod-rdp-rust01.rz.tuhh.de"];
-pub const PUBLIC_RS_PUB_KEY: &str = "hDmseojk0RuGyaAeubeAmCdvnXVPoC9n0HQHkeqPAWc=";
 
 pub const RS_PUB_KEY: &str = PUBLIC_RS_PUB_KEY;
 
@@ -691,7 +689,7 @@ impl Config {
     }
 
     pub fn get_rendezvous_server() -> String {
-        return format!("prod-rdp-rust01.rz.tuhh.de:{RENDEZVOUS_PORT}");
+
         /*
         let mut rendezvous_server = EXE_RENDEZVOUS_SERVER.read().unwrap().clone();
         if rendezvous_server.is_empty() {

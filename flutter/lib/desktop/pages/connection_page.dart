@@ -38,7 +38,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
   double get em => 14.0;
   double? get height => bind.isIncomingOnly() ? null : em * 3;
 
-  void onUsePublicServerGuide() {
+  void onUsePublicServerGuide() {R
     const url = "https://www.tuhh.de/rzt/services/institute";
     canLaunchUrlString(url).then((can) {
       if (can) {
@@ -332,7 +332,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                     child: Row(
                   children: [
                     AutoSizeText(
-                      'TUHH Remote Desktop',
+                      'TUHH Remote Client',
                       maxLines: 1,
                       style: Theme.of(context)
                           .textTheme

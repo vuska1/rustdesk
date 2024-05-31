@@ -70,6 +70,12 @@ pub trait EncoderApi {
     fn bitrate(&self) -> u32;
 
     fn support_abr(&self) -> bool;
+
+    fn support_changing_quality(&self) -> bool;
+
+    fn latency_free(&self) -> bool;
+
+    fn is_hardware(&self) -> bool;
 }
 
 pub struct Encoder {
@@ -138,7 +144,11 @@ impl Encoder {
                 }),
                 Err(e) => {
                     log::error!("new hw encoder failed: {e:?}, clear config");
+                    #[cfg(target_os = "android")]
+                    crate::android::ffi::clear_codec_info();
+                    #[cfg(not(target_os = "android"))]
                     hbb_common::config::HwCodecConfig::clear_ram();
+                    Self::update(EncodingUpdate::Check);
                     *ENCODE_CODEC_FORMAT.lock().unwrap() = CodecFormat::VP9;
                     Err(e)
                 }
@@ -151,6 +161,7 @@ impl Encoder {
                 Err(e) => {
                     log::error!("new vram encoder failed: {e:?}, clear config");
                     hbb_common::config::HwCodecConfig::clear_vram();
+                    Self::update(EncodingUpdate::Check);
                     *ENCODE_CODEC_FORMAT.lock().unwrap() = CodecFormat::VP9;
                     Err(e)
                 }
@@ -258,13 +269,21 @@ impl Encoder {
             .unwrap_or((PreferCodec::Auto.into(), 0));
         let preference = most_frequent.enum_value_or(PreferCodec::Auto);
 
-        #[allow(unused_mut)]
+        // auto: h265 > h264 > vp9/vp8
         let mut auto_codec = CodecFormat::VP9;
-        let mut system = System::new();
-        system.refresh_memory();
-        if vp8_useable && system.total_memory() <= 4 * 1024 * 1024 * 1024 {
-            // 4 Gb
-            auto_codec = CodecFormat::VP8
+        if h264_useable {
+            auto_codec = CodecFormat::H264;
+        }
+        if h265_useable {
+            auto_codec = CodecFormat::H265;
+        }
+        if auto_codec == CodecFormat::VP9 {
+            let mut system = System::new();
+            system.refresh_memory();
+            if vp8_useable && system.total_memory() <= 4 * 1024 * 1024 * 1024 {
+                // 4 Gb
+                auto_codec = CodecFormat::VP8
+            }
         }
 
         *format = match preference {
@@ -344,7 +363,14 @@ impl Encoder {
             EncoderCfg::AOM(_) => CodecFormat::AV1,
             #[cfg(feature = "hwcodec")]
             EncoderCfg::HWRAM(hw) => {
-                if hw.name.to_lowercase().contains("h264") {
+                let name = hw.name.to_lowercase();
+                if name.contains("vp8") {
+                    CodecFormat::VP8
+                } else if name.contains("vp9") {
+                    CodecFormat::VP9
+                } else if name.contains("av1") {
+                    CodecFormat::AV1
+                } else if name.contains("h264") {
                     CodecFormat::H264
                 } else {
                     CodecFormat::H265
@@ -393,7 +419,7 @@ impl Encoder {
 impl Decoder {
     pub fn supported_decodings(
         id_for_perfer: Option<&str>,
-        _flutter: bool,
+        _use_texture_render: bool,
         _luid: Option<i64>,
         mark_unsupported: &Vec<CodecFormat>,
     ) -> SupportedDecoding {
@@ -428,7 +454,7 @@ impl Decoder {
             };
         }
         #[cfg(feature = "vram")]
-        if enable_vram_option() && _flutter {
+        if enable_vram_option() && _use_texture_render {
             decoding.ability_h264 |= if VRamDecoder::available(CodecFormat::H264, _luid).len() > 0 {
                 1
             } else {
@@ -815,7 +841,7 @@ impl Decoder {
 
 #[cfg(any(feature = "hwcodec", feature = "mediacodec"))]
 pub fn enable_hwcodec_option() -> bool {
-    if cfg!(windows) || cfg!(target_os = "linux") || cfg!(feature = "mediacodec") {
+    if cfg!(windows) || cfg!(target_os = "linux") || cfg!(target_os = "android") {
         if let Some(v) = Config2::get().options.get("enable-hwcodec") {
             return v != "N";
         }
@@ -842,6 +868,15 @@ pub enum Quality {
 impl Default for Quality {
     fn default() -> Self {
         Self::Balanced
+    }
+}
+
+impl Quality {
+    pub fn is_custom(&self) -> bool {
+        match self {
+            Quality::Custom(_) => true,
+            _ => false,
+        }
     }
 }
 

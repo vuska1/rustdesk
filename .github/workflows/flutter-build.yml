@@ -958,12 +958,12 @@ jobs:
               distro: ubuntu18.04,
               on: ubuntu-20.04,
             }
-          # - {
-          #     arch: aarch64,
-          #     target: aarch64-unknown-linux-gnu,
-          #     distro: ubuntu18.04,
-          #     on: [self-hosted, Linux, ARM64],
-          #   }
+          - {
+              arch: aarch64,
+              target: aarch64-unknown-linux-gnu,
+              distro: ubuntu18.04,
+              on: [self-hosted, Linux, ARM64],
+            }
     steps:
       - name: Export GitHub Actions cache environment variables
         uses: actions/github-script@v6
@@ -1430,10 +1430,10 @@ jobs:
               target: x86_64-unknown-linux-gnu,
               arch: x86_64,
             }
-          # - {
-          #     target: aarch64-unknown-linux-gnu,
-          #     arch: aarch64,
-          #   }
+          - {
+              target: aarch64-unknown-linux-gnu,
+              arch: aarch64,
+            }
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -1488,13 +1488,13 @@ jobs:
               on: ubuntu-20.04,
               arch: x86_64,
             }
-          # - {
-          #     target: aarch64-unknown-linux-gnu,
-          #     # try out newer flatpak since error of "error: Nothing matches org.freedesktop.Platform in remote flathub"
-          #     distro: ubuntu22.04,
-          #     on: [self-hosted, Linux, ARM64],
-          #     arch: aarch64,
-          #   }
+          - {
+              target: aarch64-unknown-linux-gnu,
+              # try out newer flatpak since error of "error: Nothing matches org.freedesktop.Platform in remote flathub"
+              distro: ubuntu22.04,
+              on: [self-hosted, Linux, ARM64],
+              arch: aarch64,
+            }
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3

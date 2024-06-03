@@ -38,7 +38,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
   double get em => 14.0;
   double? get height => bind.isIncomingOnly() ? null : em * 3;
 
-  void onUsePublicServerGuide() {R
+  void onUsePublicServerGuide() {
     const url = "https://www.tuhh.de/rzt/services/institute";
     canLaunchUrlString(url).then((can) {
       if (can) {

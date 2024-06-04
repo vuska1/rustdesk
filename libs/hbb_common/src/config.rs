@@ -97,7 +97,7 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["{{rust_tuhh_server}}"];
+pub const RENDEZVOUS_SERVERS: &[&str] = &["prod-rdp-rust01.rz.tuhh.de"];
 pub const PUBLIC_RS_PUB_KEY: &str = "hDmseojk0RuGyaAeubeAmCdvnXVPoC9n0HQHkeqPAWc=";
 
 pub const RS_PUB_KEY: &str = PUBLIC_RS_PUB_KEY;

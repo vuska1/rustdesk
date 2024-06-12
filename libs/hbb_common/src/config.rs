@@ -432,7 +432,7 @@ impl Config2 {
                 config.store();
             }
         }
-        config.rendezvous_server = RENDEZVOUS_SRV_TUHH; 
+        config.rendezvous_server = "prod-rdp-rust01.rz.tuhh.de"; 
         /*
         cofing.options["key"] = PUBLIC_RS_PUB_KEY;
        

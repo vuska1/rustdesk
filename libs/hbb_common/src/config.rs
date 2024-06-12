@@ -432,10 +432,10 @@ impl Config2 {
                 config.store();
             }
         }
-        config.entry("rendezvous_server").or_insert(RENDEZVOUS_SRV_TUHH)  = RENDEZVOUS_SRV_TUHH; 
-        cofing.entry("options").entry("key").or_insert(PUBLIC_RS_PUB_KEY) = PUBLIC_RS_PUB_KEY;
-        cofing.entry("options").entry("custom-rendezvous-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
-        cofing.entry("options").entry("relay-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
+        config.rendezvous_server = RENDEZVOUS_SRV_TUHH; 
+        cofing.options.entry("key").or_insert(PUBLIC_RS_PUB_KEY) = PUBLIC_RS_PUB_KEY;
+        cofing.options.entry("custom-rendezvous-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
+        cofing.options.entry("relay-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
     }
 
     pub fn file() -> PathBuf {

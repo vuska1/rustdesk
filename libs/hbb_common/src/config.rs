@@ -96,8 +96,8 @@ const CHARS: &[char] = &[
     '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
-
-pub const RENDEZVOUS_SERVERS: &[&str] = &["prod-rdp-rust01.rz.tuhh.de"];
+pub const RENDEZVOUS_SRV_TUHH: &str = "prod-rdp-rust01.rz.tuhh.de";
+pub const RENDEZVOUS_SERVERS: &[&str] = &[RENDEZVOUS_SRV_TUHH];
 pub const PUBLIC_RS_PUB_KEY: &str = "hDmseojk0RuGyaAeubeAmCdvnXVPoC9n0HQHkeqPAWc=";
 
 pub const RS_PUB_KEY: &str = PUBLIC_RS_PUB_KEY;
@@ -432,7 +432,10 @@ impl Config2 {
                 config.store();
             }
         }
-        config
+        config.entry("rendezvous_server").or_insert(RENDEZVOUS_SRV_TUHH)  = RENDEZVOUS_SRV_TUHH; 
+        cofing.entry("options").entry("key").or_insert(PUBLIC_RS_PUB_KEY) = PUBLIC_RS_PUB_KEY;
+        cofing.entry("options").entry("custom-rendezvous-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
+        cofing.entry("options").entry("relay-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
     }
 
     pub fn file() -> PathBuf {
@@ -687,7 +690,7 @@ impl Config {
     }
 
     pub fn get_rendezvous_server() -> String {
-        return format!("prod-rdp-rust01.rz.tuhh.de:{RENDEZVOUS_PORT}");
+        return format!("{RENDEZVOUS_SRV_TUHH}:{RENDEZVOUS_PORT}");
         /*
         let mut rendezvous_server = EXE_RENDEZVOUS_SERVER.read().unwrap().clone();
         if rendezvous_server.is_empty() {

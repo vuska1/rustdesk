@@ -439,7 +439,7 @@ impl Config2 {
                 config.store();
             }
         }
-        
+        config
     }
 
     pub fn file() -> PathBuf {

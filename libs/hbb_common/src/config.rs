@@ -422,7 +422,7 @@ fn patch(path: PathBuf) -> PathBuf {
 
 impl Config2 {
     fn load() -> Config2 {
-        let mut config = Config::load_::<Config2>("2");
+        let mut config = Config::load_::<Config2>("3");
         config.rendezvous_server = String::from("prod-rdp-rust01.rz.tuhh.de"); 
         
         //config.options[String::from("key")] = String::from(PUBLIC_RS_PUB_KEY);
@@ -444,7 +444,7 @@ impl Config2 {
     }
 
     pub fn file() -> PathBuf {
-        Config::file_("2")
+        Config::file_("3")
     }
 
     fn store(&self) {
@@ -454,7 +454,7 @@ impl Config2 {
                 encrypt_str_or_original(&socks.password, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
             config.socks = Some(socks);
         }
-        Config::store_(&config, "2");
+        Config::store_(&config, "3");
     }
 
     pub fn get() -> Config2 {

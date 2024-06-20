@@ -160,7 +160,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
               ? translate("connecting_status")
               : stateGlobal.svcStatus.value == SvcStatus.notReady
                   ? translate("not_ready_status")
-                  : "RustDesk-Server",
+                  : "RustDesk-Server TUHH",
       style: TextStyle(fontSize: em),
     );
   }

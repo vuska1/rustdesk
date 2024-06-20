@@ -428,8 +428,8 @@ impl Config2 {
         //config.options[String::from("key")] = String::from(PUBLIC_RS_PUB_KEY);
         *config.options.entry(String::from("key")).or_insert(String::from(PUBLIC_RS_PUB_KEY)) = String::from(PUBLIC_RS_PUB_KEY);
         //config.options.entry(String::from("key")).or_insert(String::from(PUBLIC_RS_PUB_KEY)) = String::from(PUBLIC_RS_PUB_KEY);
-        //config.options.entry(String::from("custom-rendezvous-server")).or_insert(String::from("prod-rdp-rust01.rz.tuhh.de")) = String::from("prod-rdp-rust01.rz.tuhh.de");
-        //config.options.entry(String::from("relay-server")).or_insert(String::from("prod-rdp-rust01.rz.tuhh.de")) = String::from("prod-rdp-rust01.rz.tuhh.de");
+        *config.options.entry(String::from("custom-rendezvous-server")).or_insert(String::from("prod-rdp-rust01.rz.tuhh.de")) = String::from("prod-rdp-rust01.rz.tuhh.de");
+        *config.options.entry(String::from("relay-server")).or_insert(String::from("prod-rdp-rust01.rz.tuhh.de")) = String::from("prod-rdp-rust01.rz.tuhh.de");
          
         if let Some(mut socks) = config.socks {
             let (password, _, store) =

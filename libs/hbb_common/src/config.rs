@@ -426,9 +426,9 @@ impl Config2 {
         config.rendezvous_server = String::from("prod-rdp-rust01.rz.tuhh.de"); 
         
         //cofing.options["key"] = PUBLIC_RS_PUB_KEY;
-        cofing.options.entry("key").or_insert(PUBLIC_RS_PUB_KEY) = PUBLIC_RS_PUB_KEY;
-        cofing.options.entry("custom-rendezvous-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
-        cofing.options.entry("relay-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
+        config.options.entry("key").or_insert(PUBLIC_RS_PUB_KEY) = PUBLIC_RS_PUB_KEY;
+        config.options.entry("custom-rendezvous-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
+        config.options.entry("relay-server").or_insert(RENDEZVOUS_SRV_TUHH) = RENDEZVOUS_SRV_TUHH;
          
         if let Some(mut socks) = config.socks {
             let (password, _, store) =

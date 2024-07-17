@@ -96,9 +96,9 @@ const CHARS: &[char] = &[
     '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
-pub const RENDEZVOUS_SRV_TUHH: &str = "prod-rdp-rust01.rz.tuhh.de";
+pub const RENDEZVOUS_SRV_TUHH: &str = "****0.rz.tuhh.de";
 pub const RENDEZVOUS_SERVERS: &[&str] = &[RENDEZVOUS_SRV_TUHH];
-pub const PUBLIC_RS_PUB_KEY: &str = "hDmseojk0RuGyaAeubeAmCdvnXVPoC9n0HQHkeqPAWc=";
+pub const PUBLIC_RS_PUB_KEY: &str = "";
 
 pub const RS_PUB_KEY: &str = PUBLIC_RS_PUB_KEY;
 
@@ -423,13 +423,13 @@ fn patch(path: PathBuf) -> PathBuf {
 impl Config2 {
     fn load() -> Config2 {
         let mut config = Config::load_::<Config2>("3");
-        config.rendezvous_server = String::from("prod-rdp-rust01.rz.tuhh.de"); 
+        config.rendezvous_server = String::from("****0.rz.tuhh.de"); 
         
         //config.options[String::from("key")] = String::from(PUBLIC_RS_PUB_KEY);
         *config.options.entry(String::from("key")).or_insert(String::from(PUBLIC_RS_PUB_KEY)) = String::from(PUBLIC_RS_PUB_KEY);
         //config.options.entry(String::from("key")).or_insert(String::from(PUBLIC_RS_PUB_KEY)) = String::from(PUBLIC_RS_PUB_KEY);
-        *config.options.entry(String::from("custom-rendezvous-server")).or_insert(String::from("prod-rdp-rust01.rz.tuhh.de")) = String::from("prod-rdp-rust01.rz.tuhh.de");
-        *config.options.entry(String::from("relay-server")).or_insert(String::from("prod-rdp-rust01.rz.tuhh.de")) = String::from("prod-rdp-rust01.rz.tuhh.de");
+        *config.options.entry(String::from("custom-rendezvous-server")).or_insert(String::from("****0.rz.tuhh.de")) = String::from("****0.rz.tuhh.de");
+        *config.options.entry(String::from("relay-server")).or_insert(String::from("****0.rz.tuhh.de")) = String::from("****0.rz.tuhh.de");
          
         if let Some(mut socks) = config.socks {
             let (password, _, store) =

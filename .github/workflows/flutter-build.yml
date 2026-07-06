@@ -1521,6 +1521,8 @@ jobs:
           dockerRunArgs: |
             --volume "${PWD}:/workspace"
             --volume "/opt/artifacts:/opt/artifacts"
+            --env "TUHH_SERVER=${{ env.TUHH_SERVER }}"
+            --env "TUHH_RS_PUB_KEY=${{ env.TUHH_RS_PUB_KEY }}"
           shell: /bin/bash
           install: |
             apt-get update -y
@@ -1802,6 +1804,8 @@ jobs:
             ls -l "${PWD}"
           dockerRunArgs: |
             --volume "${PWD}:/workspace"
+            --env "TUHH_SERVER=${{ env.TUHH_SERVER }}"
+            --env "TUHH_RS_PUB_KEY=${{ env.TUHH_RS_PUB_KEY }}"
           shell: /bin/bash
           install: |
             apt-get update

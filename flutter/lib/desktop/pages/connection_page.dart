@@ -41,7 +41,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
   double? get height => bind.isIncomingOnly() ? null : em * 3;
 
   void onUsePublicServerGuide() {
-    const url = "https://rustdesk.com/pricing";
+    const url = "https://www.tuhh.de/rzt/services/institute/tuhh-remote-client"; // claude: TUHH-Hilfeseite
     canLaunchUrlString(url).then((can) {
       if (can) {
         launchUrlString(url);
@@ -94,7 +94,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
                       children: [
                         Flexible(
                           child: Text(
-                            translate('setup_server_tip'),
+                            "TUHH", // claude: TUHH-Label
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
                                 fontSize: em),
@@ -162,7 +162,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
               ? translate("connecting_status")
               : stateGlobal.svcStatus.value == SvcStatus.notReady
                   ? translate("not_ready_status")
-                  : translate('Ready'),
+                  : "RustDesk-Server TUHH", // claude: TUHH-Statusmeldung
       style: TextStyle(fontSize: em),
     );
   }

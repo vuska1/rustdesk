@@ -11,7 +11,7 @@ Widget getConnectionPageTitle(BuildContext context, bool isWeb) {
           child: Row(
         children: [
           AutoSizeText(
-            translate('Control Remote Desktop'),
+            'TUHH Remote Client', // claude: TUHH-Branding
             maxLines: 1,
             style: Theme.of(context)
                 .textTheme

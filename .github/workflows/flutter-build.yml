@@ -51,6 +51,9 @@ env:
   MACOS_P12_BASE64: "${{ secrets.MACOS_P12_BASE64 }}"
   UPLOAD_ARTIFACT: "${{ inputs.upload-artifact }}"
   SIGN_BASE_URL: "${{ secrets.SIGN_BASE_URL }}-2"
+  # claude: TUHH-Server und Public Key werden zur Build-Zeit in Rust-Konstanten injiziert (env!-Makro in hbb_common)
+  TUHH_SERVER: "${{ secrets.TUHH_SERVER }}"
+  TUHH_RS_PUB_KEY: "${{ secrets.TUHH_RS_PUB_KEY }}"
 
 jobs:
   generate-bridge:
@@ -66,10 +69,11 @@ jobs:
               target: windows-2022,
               platform: x64,
             }
-          - {
-              target: windows-11-arm,
-              platform: ARM64,
-            }
+          # claude: ARM64-Windows deaktiviert – kein ARM64-Runner bei TUHH
+          # - {
+          #     target: windows-11-arm,
+          #     platform: ARM64,
+          #   }
     with:
       upload-artifact: ${{ inputs.upload-artifact }}
       target: ${{ matrix.job.target }}
@@ -95,16 +99,15 @@ jobs:
               vcpkg-triplet: x64-windows-static,
               build-args: "--vram",
             }
-          - {
-              target: aarch64-pc-windows-msvc,
-              os: windows-11-arm,
-              arch: aarch64,
-              flutter-arch: arm64,
-              vcpkg-triplet: arm64-windows-static,
-              # vram is x86/x64-only (NVENC needs CUDA, Intel MediaSDK needs __rdtsc);
-              # no NV/Intel/AMD hardware exists on Windows-on-ARM, so vram stays disabled here.
-              build-args: "",
-            }
+          # claude: ARM64-Windows deaktiviert – kein ARM64-Runner bei TUHH
+          # - {
+          #     target: aarch64-pc-windows-msvc,
+          #     os: windows-11-arm,
+          #     arch: aarch64,
+          #     flutter-arch: arm64,
+          #     vcpkg-triplet: arm64-windows-static,
+          #     build-args: "",
+          #   }
     steps:
       - name: Export GitHub Actions cache environment variables
         uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6

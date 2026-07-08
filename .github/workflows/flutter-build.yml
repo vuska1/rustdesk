@@ -1203,6 +1203,15 @@ jobs:
           files: |
             signed-apk/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
 
+      # claude: ohne ANDROID_SIGNING_KEY wird das APK nicht als Actions-Artifact hochgeladen;
+      #         dieser Step stellt unsigned APKs trotzdem als Artifact bereit (debug-keystore reicht zum Sideloaden)
+      - name: Upload unsigned APK artifact
+        if: env.ANDROID_SIGNING_KEY == null && env.UPLOAD_ARTIFACT == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
+          path: signed-apk/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
+
   build-rustdesk-android-universal:
     needs: [build-rustdesk-android]
     name: build rustdesk android universal apk
@@ -1386,6 +1395,14 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           files: |
             signed-apk/rustdesk-${{ env.VERSION }}-universal${{ env.suffix }}.apk
+
+      # claude: unsigned universal APK als Actions-Artifact – analog per-arch Fix
+      - name: Upload unsigned universal APK artifact
+        if: env.ANDROID_SIGNING_KEY == null && env.UPLOAD_ARTIFACT == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: rustdesk-${{ env.VERSION }}-universal.apk
+          path: signed-apk/rustdesk-${{ env.VERSION }}-universal${{ env.suffix }}.apk
 
   build-rustdesk-linux:
     needs: [generate-bridge]

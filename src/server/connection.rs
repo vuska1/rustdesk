@@ -4206,7 +4206,13 @@ impl Connection {
             err = "No permission".to_string();
         } else {
             err = "No need to elevate".to_string();
-            if !crate::platform::is_installed() && !portable_client::running() {
+            // claude: auch bei installierter Version Elevation erlauben wenn der Prozess NICHT als
+            // SYSTEM laeuft (is_root()=false → sasEnabled=false). Ohne diesen Fix antwortet der
+            // Server sofort "No need to elevate" und der Logon-Pfad (CreateProcessWithLogonW)
+            // wird nie versucht, obwohl der Nutzer Credentials eingegeben hat.
+            if (!crate::platform::is_installed() || !crate::platform::is_root())
+                && !portable_client::running()
+            {
                 err = portable_client::start_portable_service(para)
                     .err()
                     .map_or("".to_string(), |e| e.to_string());

@@ -2898,19 +2898,9 @@ pub fn create_process_with_logon(user: &str, pwd: &str, exe: &str, arg: &str) ->
     ]);
 
     unsafe {
-        // claude: user kann "domain\user", ".\user" oder einfach "user" sein.
-        // get(0).unwrap_or(&"") waere fuer "user" (kein Backslash) immer "user"
-        // statt leer – CreateProcessWithLogonW bekommt dann "user" als Domain,
-        // was ERROR_LOGON_FAILURE verursacht. Fix: bei fehlendem Backslash "."
-        // (lokaler Rechner) als Domain verwenden.
         let user_split = user.split("\\").collect::<Vec<&str>>();
-        let (domain, username) = if user_split.len() >= 2 {
-            (user_split[0], user_split[1])
-        } else {
-            (".", user)
-        };
-        let wuser = wide_string(username);
-        let wpc = wide_string(domain);
+        let wuser = wide_string(user_split.get(1).unwrap_or(&user));
+        let wpc = wide_string(user_split.get(0).unwrap_or(&""));
         let wpwd = wide_string(pwd);
         let cmd = if arg.is_empty() {
             format!("\"{}\"", exe)

@@ -345,12 +345,8 @@ List<TTextMenu> toolbarControls(BuildContext context, String id, FFI ffi) {
     v.add(
       TTextMenu(
           child: Text(translate('Request Elevation')),
-          // claude: direkt sessionElevateDirect – zeigt natives Windows-UAC-Dialog
-          //         statt RustDesk-Auswahldialog (Logon-Pfad verursachte ACL-Fehler)
-          onPressed: () {
-            bind.sessionElevateDirect(sessionId: sessionId);
-            showWaitUacDialog(sessionId, ffi.dialogManager, "wait-uac");
-          }),
+          onPressed: () =>
+              showRequestElevationDialog(sessionId, ffi.dialogManager)),
     );
   }
   // osAccount / osPassword

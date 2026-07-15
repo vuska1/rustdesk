@@ -1287,16 +1287,24 @@ fn get_subkey(name: &str, wow: bool) -> String {
 }
 
 fn get_valid_subkey() -> String {
+    // claude: app_name-Key zuerst pruefen, sonst findet get_valid_subkey() den
+    // IS1-GUID-Key eines frueheren Standard-RustDesk-Installs und liefert dessen
+    // InstallLocation (z.B. C:\Program Files\RustDesk\) – der Uninstaller wuerde
+    // dann das falsche Verzeichnis loeschen und unser Verzeichnis bleibt bestehen.
+    let app_name = crate::get_app_name();
+    let subkey = get_subkey(&app_name, false);
+    if !get_reg_of(&subkey, "InstallLocation").is_empty() {
+        return subkey;
+    }
+    let subkey = get_subkey(&app_name, true);
+    if !get_reg_of(&subkey, "InstallLocation").is_empty() {
+        return subkey;
+    }
     let subkey = get_subkey(IS1, false);
     if !get_reg_of(&subkey, "InstallLocation").is_empty() {
         return subkey;
     }
     let subkey = get_subkey(IS1, true);
-    if !get_reg_of(&subkey, "InstallLocation").is_empty() {
-        return subkey;
-    }
-    let app_name = crate::get_app_name();
-    let subkey = get_subkey(&app_name, true);
     if !get_reg_of(&subkey, "InstallLocation").is_empty() {
         return subkey;
     }
@@ -1578,6 +1586,15 @@ pub fn install_me(options: &str, path: String, silent: bool, debug: bool) -> Res
     let app_name = crate::get_app_name();
 
     let current_exe = std::env::current_exe()?;
+    // claude: Cargo benennt den Binary "rustdesk.exe" (nicht "RustDesk_TUHH.exe").
+    // Wir benennen nicht um, also muss exe im Install-Pfad den echten Dateinamen
+    // widerspiegeln – sonst zeigen Shortcuts und UninstallString auf eine Datei
+    // die nicht existiert.
+    let binary_filename = current_exe
+        .file_name()
+        .map(|n| n.to_string_lossy().to_string())
+        .unwrap_or_else(|| format!("{}.exe", app_name.to_lowercase()));
+    exe = format!("{}\\{}", path, binary_filename);
 
     let tmp_path = std::env::temp_dir().to_string_lossy().to_string();
     let cur_exe = current_exe.to_str().unwrap_or("").to_owned();
@@ -1765,6 +1782,12 @@ pub fn run_before_uninstall() -> ResultType<()> {
 fn get_before_uninstall(kill_self: bool) -> String {
     let app_name = crate::get_app_name();
     let ext = app_name.to_lowercase();
+    // claude: Cargo-Binary heisst "rustdesk.exe", nicht "{app_name}.exe".
+    // Wir lesen den echten Dateinamen aus current_exe(); Fallback auf rustdesk.exe.
+    let binary_exe = std::env::current_exe()
+        .ok()
+        .and_then(|p| p.file_name().map(|n| n.to_string_lossy().to_string()))
+        .unwrap_or_else(|| "rustdesk.exe".to_string());
     let filter = if kill_self {
         "".to_string()
     } else {
@@ -1776,7 +1799,7 @@ fn get_before_uninstall(kill_self: bool) -> String {
     sc stop {app_name}
     sc delete {app_name}
     taskkill /F /IM {broker_exe}
-    taskkill /F /IM {app_name}.exe{filter}
+    taskkill /F /IM {binary_exe}{filter}
     reg delete HKEY_CLASSES_ROOT\\.{ext} /f
     reg delete HKEY_CLASSES_ROOT\\{ext} /f
     netsh advfirewall firewall delete rule name=\"{app_name} Service\"

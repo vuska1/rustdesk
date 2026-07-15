@@ -1102,14 +1102,8 @@ pub mod client {
                                 Path::new(dir),
                                 FILE_GENERIC_READ.0 | FILE_GENERIC_EXECUTE.0,
                             ) {
-                                // claude: win32_error=5 (ACCESS_DENIED) tritt auf wenn das
-                                // Installationsverzeichnis (z.B. C:\Program Files\RustDesk_TUHH)
-                                // eine geschuetzte DACL hat. Program Files ist per Windows-Default
-                                // bereits world-readable – ACL-Aenderung nicht zwingend noetig.
-                                log::warn!(
-                                    "Failed to set permission of {:?}: {} (continuing – directory should already be readable)",
-                                    dir, err
-                                );
+                                clear_runtime_shmem_state();
+                                bail!("Failed to set permission of {:?}: {}", dir, err);
                             }
                         }
                     }
